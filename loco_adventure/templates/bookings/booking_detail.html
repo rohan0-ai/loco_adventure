@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Detail - LocoAdventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .detail-card {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-purple-600 to-blue-500 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/10 backdrop-blur-md fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <a href="{% url 'user-dashboard' %}" class="hover:underline">LocoAdventure</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 pt-24 pb-12 flex items-center justify-center">
+        <div class="w-full max-w-3xl bg-white/20 backdrop-blur-lg rounded-xl p-8 shadow-xl">
+            <h1 class="text-3xl font-bold text-white mb-8 text-center">Booking Details</h1>
+
+            <div class="detail-card bg-white/10 rounded-lg p-6 space-y-4 text-white/90">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="font-medium text-green-300">🎟️ Booking ID</p>
+                        <p>{{ booking.id }}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium text-green-300">📅 Booking Date</p>
+                        <p>{{ booking.booking_date|date:"F j, Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/20 pt-4">
+                    <p class="font-medium text-green-300">🏔️ Adventure</p>
+                    <p class="text-lg">{{ booking.adventure.title }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <p class="font-medium text-green-300">🎫 Tickets</p>
+                        <p>{{ booking.tickets }}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium text-green-300">💰 Total Price</p>
+                        <p>₹{{ booking.total_price }}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium text-green-300">📌 Status</p>
+                        <p
+                            class="{% if booking.status == 'confirmed' %}text-green-300{% else %}text-yellow-300{% endif %}">
+                            {{ booking.get_status_display }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="{% url 'bookings:booking-list' %}"
+                    class="bg-gradient-to-r from-green-400 to-blue-400 text-purple-900 px-6 py-3 rounded-lg font-bold hover:shadow-lg transition-all transform hover:scale-105 inline-block">
+                    ← Back to Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-white/80 text-sm pb-6">
+        <p>© 2025 LocoAdventure. All rights reserved.</p>
+    </div>
+</body>
+
+</html>

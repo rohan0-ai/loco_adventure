@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Dashboard - LocoAdventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dashboard-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .drop-zone {
+            border: 2px dashed #9333ea;
+            background: rgba(147, 51, 234, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Navigation -->
+    <nav class="bg-purple-600 fixed w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>LocoAdventure Vendor</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-yellow-300 hover:text-yellow-400">Help</a>
+                <div class="relative">
+                    <button id="profileButton"
+                        class="w-10 h-10 rounded-full bg-yellow-400 text-purple-900 flex items-center justify-center cursor-pointer font-bold focus:outline-none">
+                        {% if vendor.user.profile_pic %}
+                        <img src="{{ vendor.user.profile_pic.url }}" alt="Profile"
+                            class="w-10 h-10 rounded-full object-cover" />
+                        {% else %}
+                        {{ vendor.business_name|slice:":2"|upper }}
+                        {% endif %}
+                    </button>
+                    <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl hidden">
+                        <a href="#" class="block px-4 py-2 text-purple-600 hover:bg-purple-50">My Listings</a>
+                        <a href="#" class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Analytics</a>
+                        <a href="{% url 'vendors:vendor-logout' %}"
+                            class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const profileButton = document.getElementById('profileButton');
+        const profileMenu = document.getElementById('profileMenu');
+
+        profileButton.addEventListener('click', () => {
+            profileMenu.classList.toggle('hidden');
+        });
+
+        // Close the menu if clicked outside
+        document.addEventListener('click', (event) => {
+            if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-12 px-4 sm:px-6">
+        <div class="container mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-purple-600">Manage Adventures</h1>
+                <button onclick="showNewAdventureForm()"
+                    class="bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 px-6 py-3 rounded-xl font-bold hover:shadow-lg">
+                    + New Adventure
+                </button>
+            </div>
+
+            <!-- Existing Listings -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {% for adventure in adventures %}
+                <div class="dashboard-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-purple-600">{{ adventure.title }}</h3>
+                        {% if vendor.verified %}
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Active</span>
+                        {% else %}
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm">Pending
+                            Verification</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-600 mb-4">{{ adventure.vendor.rating|default:"0.0" }} ★</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Bookings:</span>
+                            <span class="font-semibold">{{ adventure.bookings_count|default:"0" }} upcoming</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Revenue:</span>
+                            <span class="font-semibold">₹{{ adventure.revenue|default:"0" }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <a href="{% url 'vendors:edit-adventure' adventure.id %}"
+                            class="flex-1 bg-purple-50 text-purple-600 py-2 rounded-lg hover:bg-purple-100 text-center">
+                            Edit
+                        </a>
+                        <button class="flex-1 bg-purple-50 text-purple-600 py-2 rounded-lg hover:bg-purple-100">
+                            Stats
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No adventures found. Please add a new adventure.</p>
+                {% endfor %}
+            </div>
+
+            <!-- New Adventure Form -->
+            <div id="newAdventureForm" class="hidden bg-white rounded-xl p-8 shadow-lg">
+                <h2 class="text-2xl font-bold text-purple-600 mb-6">Create New Adventure</h2>
+
+                <form method="POST" action="{% url 'vendors:vendor-dashboard' %}" class="space-y-6"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <p>
+                        {{ form.title.label_tag }}<br />
+                        {{ form.title }}<br />
+                        {{ form.title.errors }}
+                    </p>
+                    <p>
+                        {{ form.price.label_tag }}<br />
+                        {{ form.price }}<br />
+                        {{ form.price.errors }}
+                    </p>
+                    <p>
+                        {{ form.capacity.label_tag }}<br />
+                        {{ form.capacity }}<br />
+                        {{ form.capacity.errors }}
+                    </p>
+                    <p id="start_time_field">
+                        {{ form.start_time.label_tag }}<br />
+                        {{ form.start_time }}<br />
+                        {{ form.start_time.errors }}
+                    </p>
+                    <p id="end_time_field">
+                        {{ form.end_time.label_tag }}<br />
+                        {{ form.end_time }}<br />
+                        {{ form.end_time.errors }}
+                    </p>
+                    <p>
+                        {{ form.adventure_type.label_tag }}<br />
+                        {{ form.adventure_type }}<br />
+                        {{ form.adventure_type.errors }}
+                    </p>
+                    <p>
+                        {{ form.address.label_tag }}<br />
+                        {{ form.address }}<br />
+                        {{ form.address.errors }}
+                    </p>
+                    <p>
+                        {{ form.description.label_tag }}<br />
+                        {{ form.description }}<br />
+                        {{ form.description.errors }}
+                    </p>
+                    <p>
+                        {{ form.online_booking.label_tag }}<br />
+                        {{ form.online_booking }}<br />
+                        {{ form.online_booking.errors }}
+                    </p>
+                    <p>
+                        {{ form.image.label_tag }}<br />
+                        {{ form.image }}<br />
+                        {{ form.image.errors }}
+                    </p>
+
+                    <!-- Form Actions -->
+                    <div class="flex gap-4 pt-6">
+                        <button type="button" onclick="hideNewAdventureForm()"
+                            class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-lg hover:bg-gray-200">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 py-3 rounded-lg font-bold hover:shadow-lg">
+                            Save & Publish
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Form Toggle
+        function showNewAdventureForm() {
+            document.getElementById('newAdventureForm').classList.remove('hidden');
+        }
+
+        function hideNewAdventureForm() {
+            document.getElementById('newAdventureForm').classList.add('hidden');
+        }
+
+        // Drag & Drop Handling
+        const dropZone = document.querySelector('.drop-zone');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-purple-50');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('bg-purple-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-purple-50');
+            // Handle file upload
+        });
+
+        // Dynamic show/hide for start_time and end_time
+        function toggleTimeFields() {
+            const adventureType = document.getElementById('id_adventure_type').value;
+            const startTimeField = document.getElementById('start_time_field');
+            const endTimeField = document.getElementById('end_time_field');
+            const startTimeInput = document.getElementById('id_start_time');
+            const endTimeInput = document.getElementById('id_end_time');
+
+            if (adventureType === 'EVENT') {
+                startTimeField.style.display = 'block';
+                endTimeField.style.display = 'block';
+                startTimeInput.required = true;
+                endTimeInput.required = true;
+            } else {
+                startTimeField.style.display = 'none';
+                endTimeField.style.display = 'none';
+                startTimeInput.required = false;
+                endTimeInput.required = false;
+                startTimeInput.value = '';
+                endTimeInput.value = '';
+            }
+        }
+
+        document.getElementById('id_adventure_type').addEventListener('change', toggleTimeFields);
+
+        // Initialize on page load
+        window.onload = toggleTimeFields;
+    </script>
+
+</body>
+
+</html>

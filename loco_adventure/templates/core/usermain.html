@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocoAdventure - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .adventure-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .adventure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .rating-star {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Navigation - Updated Colors -->
+    <nav class="bg-purple-600 fixed w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <!-- Logo - Now Visible -->
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>LocoAdventure</span>
+            </div>
+
+            <!-- User Menu - Improved Contrast -->
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'bookings:booking-list' %}" class="text-yellow-300 hover:text-yellow-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                </a>
+                <div class="relative">
+                    {% if user.profile_pic %}
+                    <img id="profileButton" src="{{ user.profile_pic.url }}" alt="Profile Picture"
+                        class="w-10 h-10 rounded-full object-cover cursor-pointer" />
+                    {% else %}
+                    <div id="profileButton"
+                        class="w-10 h-10 rounded-full bg-yellow-400 text-purple-900 flex items-center justify-center cursor-pointer font-bold">
+                        {{ initials }}
+                    </div>
+                    {% endif %}
+                    <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl hidden">
+                        <a href="{% url 'bookings:booking-list' %}"
+                            class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Bookings</a>
+                        <a href="{% url 'user-logout' %}"
+                            class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-12 px-4 sm:px-6">
+        <!-- Search Section -->
+        <section class="container mx-auto mb-12">
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <form method="get" class="flex flex-col md:flex-row gap-4">
+                    {{ form.search }}
+                    {{ form.category }}
+                    <button type="submit"
+                        class="bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 px-8 py-4 rounded-xl font-bold hover:shadow-lg">
+                        Search
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Featured Adventures -->
+        <section class="container mx-auto">
+            <h2 class="text-3xl font-bold text-purple-600 mb-8">Featured Adventures Near You</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="adventure-list">
+                {% for adventure in featured_adventures %}
+                <div class="adventure-card bg-white rounded-xl overflow-hidden" data-adventure-id="{{ adventure.id }}">
+                    {% if adventure.image %}
+                    <img src="{{ adventure.image.url }}" alt="{{ adventure.title }}" class="w-full h-48 object-cover">
+                    {% else %}
+                    <img src="/static/Images/default.jpg" alt="Default Adventure" class="w-full h-48 object-cover">
+                    {% endif %}
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-purple-600">{{ adventure.title }}</h3>
+                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+                                {{ adventure.vendor.rating|default:"4.5" }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-2 font-semibold">
+                            Location:
+                            {% if adventure.address %}
+                            {{ adventure.address }}
+                            {% else %}
+                            <span class="italic text-gray-400">Address not available</span>
+                            {% endif %}
+                        </p>
+
+
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-2xl font-bold text-purple-600">₹{{ adventure.price }}</p>
+                                <p class="text-sm text-gray-500">per person</p>
+                            </div>
+                            {% if adventure.online_booking %}
+                            <a href="{% url 'bookings:create-booking' adventure_id=adventure.id %}"
+                                class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full inline-block text-center">
+                                Book Now
+                            </a>
+
+                            {% else %}
+                            {% include 'core/explore_button.html' with adventure=adventure %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex justify-center mt-8">
+                <button id="exploreMoreBtn"
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full font-semibold">
+                    Explore More
+                </button>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="container mx-auto mt-16">
+            <h2 class="text-3xl font-bold text-purple-600 mb-8">Explore Categories</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#" class="category-card p-6 bg-white rounded-xl hover:bg-purple-50 transition-colors">
+                    <div class="text-purple-500 mb-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-gray-800">Thrill Seekers</h3>
+                </a>
+
+                <!-- Add more category cards -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Profile dropdown toggle
+        const profileButton = document.getElementById('profileButton');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        profileButton.addEventListener('click', () => {
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+
+        // Get user location and reload page with lat/lon query params
+        function getLocationAndReload() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('latitude', lat);
+                    url.searchParams.set('longitude', lon);
+                    window.location.href = url.toString();
+                }, function (error) {
+                    console.warn('Error getting location:', error);
+                });
+            } else {
+                console.warn('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Call getLocationAndReload on page load
+        window.onload = function () {
+            if (!window.location.search.includes('latitude') || !window.location.search.includes('longitude')) {
+                getLocationAndReload();
+            }
+        };
+
+        // Explore More button functionality
+        let currentPage = 2; // Since first 3 adventures are page 1
+        const exploreMoreBtn = document.getElementById('exploreMoreBtn');
+        const adventureList = document.getElementById('adventure-list');
+
+        exploreMoreBtn.addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const latitude = urlParams.get('latitude');
+            const longitude = urlParams.get('longitude');
+            const category = document.querySelector('select[name="category"]').value;
+            const search = document.querySelector('input[name="search"]').value;
+
+            let url = `/load-more-adventures/?page=${currentPage}`;
+            if (latitude && longitude) {
+                url += `&latitude=${latitude}&longitude=${longitude}`;
+            }
+            if (category) {
+                url += `&category=${encodeURIComponent(category)}`;
+            }
+            if (search) {
+                url += `&search=${encodeURIComponent(search)}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    data.adventures.forEach(adventure => {
+                        const adventureCard = document.createElement('div');
+                        adventureCard.className = 'adventure-card bg-white rounded-xl overflow-hidden';
+                        adventureCard.innerHTML = `
+                    <img src="${adventure.image_url}" alt="${adventure.title}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-purple-600">${adventure.title}</h3>
+                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+                                ${adventure.vendor_rating}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-2 font-semibold">
+                            Location: ${adventure.address ? adventure.address : '<span class="italic text-gray-400">Address not available</span>'}
+                        </p>
+                        <p class="text-gray-600 mb-4">${adventure.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-2xl font-bold text-purple-600">₹${adventure.price}</p>
+                                <p class="text-sm text-gray-500">per person</p>
+                            </div>
+                            ${adventure.online_booking
+                                ? `<button onclick="location.href='/bookings/create/${adventure.id}/'" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full">
+                                    Book Now
+                                </button>`
+                                : `<a href="/adventures/${adventure.id}/" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full inline-block text-center font-bold">
+                                    Explore
+                                </a>`
+                            }
+                        </div>
+                    </div>
+                `;
+                        adventureList.appendChild(adventureCard);
+                    });
+
+                    if (!data.has_next) {
+                        exploreMoreBtn.style.display = 'none';
+                    } else {
+                        currentPage++;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more adventures:', error);
+                });
+        });
+    </script>
+
+</body>
+
+</html>

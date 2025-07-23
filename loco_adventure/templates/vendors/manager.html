@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocoAdventure - Vendor Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-purple-600 to-blue-500 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/10 backdrop-blur-md fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>LocoAdventure Vendors</span>
+            </div>
+            <div class="space-x-4">
+                <a href="{% url 'vendors:vendor-login' %}" class="text-white hover:text-green-300">Vendor Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <div class="container mx-auto px-6 pt-24 pb-12 flex items-center justify-center">
+        <div class="w-full max-w-xl bg-white/20 backdrop-blur-lg rounded-xl p-8 shadow-xl">
+            <h2 class="text-3xl font-bold text-white mb-8 text-center">Vendor Registration</h2>
+
+            <form method="POST" action="{% url 'vendors:vendor-register' %}" class="space-y-6">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                    <strong class="font-medium">Please fix the errors below:</strong>
+                    <ul class="mt-2 list-disc list-inside">
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-white text-sm font-medium mb-2">👤
+                        Username</label>
+                    <input type="text" name="{{ form.username.name }}"
+                        class="form-input w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30"
+                        placeholder="Enter your username">
+                </div>
+
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-white text-sm font-medium mb-2">📧
+                        Email</label>
+                    <input type="email" name="{{ form.email.name }}"
+                        class="form-input w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30"
+                        placeholder="your.email@example.com">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.password1.id_for_label }}"
+                            class="block text-white text-sm font-medium mb-2">🔑 Password</label>
+                        <input type="password" name="{{ form.password1.name }}"
+                            class="form-input w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30"
+                            placeholder="••••••••">
+                    </div>
+
+                    <div>
+                        <label for="{{ form.password2.id_for_label }}"
+                            class="block text-white text-sm font-medium mb-2">✅ Confirm Password</label>
+                        <input type="password" name="{{ form.password2.name }}"
+                            class="form-input w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30"
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                {{ form.user_type.as_hidden }}
+
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-green-400 to-blue-400 text-purple-900 px-6 py-3 rounded-lg font-bold hover:shadow-lg transition-all transform hover:scale-105">
+                    🚀 Register Vendor
+                </button>
+
+                <!-- Agreement -->
+                <p class="text-center text-white/80 text-xs">
+                    By registering, you agree to our
+                    <a href="#" class="text-green-300 hover:text-green-400">Terms of Service</a> and
+                    <a href="#" class="text-green-300 hover:text-green-400">Privacy Policy</a>
+                </p>
+
+                <!-- Login Link -->
+                <p class="text-center text-white text-sm">
+                    Already have an account?
+                    <a href="{% url 'vendors:vendor-login' %}"
+                        class="text-green-300 hover:text-green-400 font-medium">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-white/80 text-sm pb-6">
+        <p>© 2025 LocoAdventure. All rights reserved.</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Booking - LocoAdventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .booking-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .time-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Navigation (Same as Main Page) -->
+    <nav class="bg-purple-600 fixed w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <a href="{% url 'user-dashboard' %}" class="hover:underline">LocoAdventure</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Main Content -->
+    <main class="pt-20 pb-12 px-4 sm:px-6">
+        <div class="container mx-auto flex flex-col lg:flex-row gap-8">
+            <!-- Adventure Details -->
+            <div class="flex-1">
+                <div class="booking-card bg-white rounded-xl p-6 shadow-lg">
+                    {% if adventure.image %}
+                    <img src="{{ adventure.image.url }}" alt="Adventure Image"
+                        class="w-full h-64 object-cover rounded-lg mb-6">
+                    {% else %}
+                    <img src="/static/Images/default.jpg" alt="Adventure Image"
+                        class="w-full h-64 object-cover rounded-lg mb-6">
+                    {% endif %}
+                    <h1 class="text-3xl font-bold text-purple-600 mb-4">{{ adventure.title }}</h1>
+
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex items-center text-yellow-400">
+                            ★★★★★ <span class="ml-2 text-gray-600">(128 reviews)</span>
+                        </div>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Instant
+                            Confirmation</span>
+                    </div>
+
+                    <p class="text-gray-600 mb-6">{{ adventure.description|default:"Exciting adventure awaits." }}</p>
+
+                    <!-- Added Location Display -->
+                    {% if adventure.address %}
+                    <p class="text-gray-700 font-semibold mb-6">Location: {{ adventure.address }}</p>
+                    {% endif %}
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <p class="text-sm text-gray-500">Duration</p>
+                            <p class="font-bold text-purple-600">{{ adventure.duration|default:"2 hours" }}</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <p class="text-sm text-gray-500">Capacity</p>
+                            <p class="font-bold text-purple-600">{{ adventure.capacity }} people/session</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <h3 class="text-xl font-bold text-purple-600 mb-4">Vendor Information</h3>
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white">
+                                {{ adventure.vendor.business_name|slice:":2"|upper }}</div>
+                            <div>
+                                <p class="font-bold">{{ adventure.vendor.business_name }}</p>
+                                <p class="text-gray-600">⭐ {{ adventure.vendor.rating }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="lg:w-96">
+                <div class="bg-white rounded-xl p-6 shadow-lg sticky top-24">
+                    <h2 class="text-2xl font-bold text-purple-600 mb-6">Book Your Adventure</h2>
+
+                    <!-- Date Picker -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">Select Date</label>
+                        <input type="date" name="booking_date"
+                            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500"
+                            min="{{ current_date }}">
+                    </div>
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <!-- Ticket Selector -->
+                        <div class="mb-6" aria-label="quantity-controls" data-price="{{ adventure.price }}">
+                            <label class="block text-gray-700 mb-2">Participants</label>
+                            <div class="flex items-center border rounded-lg p-2">
+                                <button type="button" class="px-3 py-1 text-purple-600">−</button>
+                                <input type="number" name="quantity" value="{{ quantity }}" min="1"
+                                    id="participantCount" class="flex-1 text-center border-0 focus:ring-0" required>
+                                <button type="button" class="px-3 py-1 text-purple-600">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Discount Code -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2">Discount Code</label>
+                            <div class="flex gap-2">
+                                <input type="text"
+                                    class="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-purple-500" disabled>
+                                <button class="bg-purple-500 text-white px-4 rounded-lg opacity-50 cursor-not-allowed"
+                                    disabled>
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Price Summary -->
+                        <div class="space-y-3 mb-6" id="priceSummary">
+                            <div class="flex justify-between">
+                                <span>₹{{ adventure.price }} x <span id="quantityDisplay">{{ quantity }}</span></span>
+                                <span>₹<span id="priceDisplay">{{ total_amount }}</span></span>
+                            </div>
+                            <div class="flex justify-between text-green-600">
+                                <span>Discount</span>
+                                <span>-₹0</span>
+                            </div>
+                            <div class="flex justify-between font-bold text-purple-600">
+                                <span>Total</span>
+                                <span>₹<span id="totalDisplay">{{ total_amount }}</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 py-4 rounded-xl font-bold hover:opacity-90 transition-all">
+                            Confirm Booking
+                        </button>
+                    </form>
+
+                    <script>
+                        // Enforce min date on date input as fallback
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const dateInput = document.querySelector('input[type="date"][name="booking_date"]');
+                            if (dateInput) {
+                                const today = new Date().toISOString().split('T')[0];
+                                dateInput.setAttribute('min', today);
+                                if (dateInput.value < today) {
+                                    dateInput.value = today;
+                                }
+                            }
+
+                            // Existing quantity update code
+                            function incrementQuantity(event) {
+                                event.preventDefault();
+                                const input = document.getElementById('participantCount');
+                                input.value = parseInt(input.value) + 1;
+                                updateTotal();
+                            }
+
+                            function decrementQuantity(event) {
+                                event.preventDefault();
+                                const input = document.getElementById('participantCount');
+                                input.value = Math.max(1, parseInt(input.value) - 1);
+                                updateTotal();
+                            }
+
+                            // Update total amount display
+                            function updateTotal() {
+                                const quantity = parseInt(document.getElementById('participantCount').value) || 1;
+                                const price = parseFloat(document.querySelector('[aria-label="quantity-controls"]').getAttribute('data-price'));
+                                const total = quantity * price;
+                                document.getElementById('quantityDisplay').textContent = quantity;
+                                document.getElementById('priceDisplay').textContent = total.toFixed(2);
+                                document.getElementById('totalDisplay').textContent = total.toFixed(2);
+                            }
+
+                            // Initialize total on page load
+                            updateTotal();
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4">Complete Your Payment</h3>
+            <!-- Payment form elements would go here -->
+            <button onclick="confirmPayment()"
+                class="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600">
+                Confirm Payment (Test Mode)
+            </button>
+            <button onclick="hidePaymentModal()" class="mt-4 text-gray-500 hover:text-gray-700">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample payment handling
+        function handlePayment() {
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function hidePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function confirmPayment() {
+            // Handle Razorpay integration here
+            alert('Payment Successful! Redirecting to tickets...');
+            hidePaymentModal();
+        }
+
+        // Ticket quantity controls
+        document.querySelectorAll('[aria-label="quantity-controls"] button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const input = e.target.parentNode.querySelector('input');
+                input.value = e.target.textContent.trim() === '+' ?
+                    parseInt(input.value) + 1 :
+                    Math.max(1, parseInt(input.value) - 1);
+                updateTotal();
+            });
+        });
+
+        // Update total amount display
+        function updateTotal() {
+            const quantity = parseInt(document.getElementById('participantCount').value) || 1;
+            const price = parseFloat(document.querySelector('[aria-label="quantity-controls"]').getAttribute('data-price'));
+            const total = quantity * price;
+            document.getElementById('quantityDisplay').textContent = quantity;
+            document.getElementById('priceDisplay').textContent = total.toFixed(2);
+            document.getElementById('totalDisplay').textContent = total.toFixed(2);
+        }
+
+        // Initialize total on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTotal();
+        });
+    </script>
+
+</body>
+
+</html>

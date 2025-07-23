@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocoAdventure - Discover Local Adventures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adventure-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .adventure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+    <!-- Navigation -->
+    <nav class="bg-white/10 backdrop-blur-md fixed w-full z-50 shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="text-white font-bold text-xl sm:text-2xl flex items-center space-x-2">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>LocoAdventure</span>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-4 items-center">
+                <a href="{% url 'user-login' %}"
+                    class="text-white hover:text-yellow-300 px-3 py-2 transition-all duration-300 transform hover:scale-105">
+                    Login
+                </a>
+                <a href="{% url 'user-register' %}"
+                    class="bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all">
+                    Sign Up
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuButton" class="md:hidden p-2 text-white focus:outline-none z-50">
+                <svg id="menuIcon" class="w-8 h-8 transition-transform duration-300" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path id="top-line" d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu"
+            class="hidden md:hidden fixed w-full bg-gradient-to-br from-purple-700 to-blue-600 backdrop-blur-xl z-40 top-16 shadow-xl">
+            <div class="px-4 pt-4 pb-6 space-y-4">
+                <a href="{% url 'user-login' %}"
+                    class="group flex items-center space-x-3 text-white px-4 py-3 rounded-xl hover:bg-white/10 transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="font-medium">Login</span>
+                </a>
+
+                <a href="#"
+                    class="block bg-gradient-to-r from-yellow-400 to-orange-400 text-purple-900 px-4 py-3 rounded-full font-bold text-center shadow-md hover:shadow-lg transition-all">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        /* Smooth transitions */
+        #mobileMenu {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .menu-open #mobileMenu {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #menuIcon {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+
+    <!-- Hero Section -->
+    <section class="section bg-gradient-to-br from-purple-600 to-blue-500">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold text-white mb-8 leading-tight">
+                Discover Amazing Adventures<br>
+                <span class="text-yellow-300">Right in Your Neighborhood!</span>
+            </h1>
+
+            <div class="flex flex-col space-y-6 md:flex-row md:space-y-0 md:space-x-6 justify-center">
+                <button onclick="showUserModal()"
+                    class="bg-white text-purple-600 hover:bg-purple-100 px-8 py-4 rounded-full text-lg font-bold shadow-lg transform transition hover:scale-105 flex items-center">
+                    🌟 Find Adventure Near You
+                </button>
+                <button onclick="showVendorModal()"
+                    class="border-2 border-white text-white hover:bg-white/20 px-8 py-4 rounded-full text-lg font-bold shadow-lg transform transition hover:scale-105 flex items-center">
+                    ➕ Add Your Adventure
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="userModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4">Features After Registration(Free)!</h3>
+            <ul class="space-y-3 mb-6 text-gray-700">
+                <li>⭐ Add places to wishlists</li>
+                <li>📝 Rate & write reviews</li>
+                <li>🎁 Limited-time discounts</li>
+                <li>📅 Manage bookings & history</li>
+            </ul>
+            <div class="flex gap-4">
+                <a href="{% url 'user-dashboard' %}"
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg inline-block text-center">
+                    Already a Adventurer
+                </a>
+
+                <a href="{% url 'user-register' %}"
+                    class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg inline-block text-center">
+                    Register Now
+                </a>
+            </div>
+            <button onclick="hideModals()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">×</button>
+        </div>
+    </div>
+
+    <div id="vendorModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4">List Your Adventure!</h3>
+            <p class="mb-4 text-gray-700">✨ Now, add your place or event on LocoAdventure</p>
+            <ul class="list-disc pl-5 mb-6 space-y-2 text-gray-700">
+                <li>Set time-limited discounts</li>
+                <li>Reach new customers</li>
+                <li>Connect with top-rated users</li>
+                <li>Real-time booking management</li>
+            </ul>
+            <a href="{% url 'vendors:vendor-register' %}"
+                class="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg inline-block text-center">
+                Get Started
+            </a>
+
+            <button onclick="hideModals()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">×</button>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section class="section bg-white py-20">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center mb-16">
+                <h2 class="text-4xl font-bold text-purple-600 mb-8">Your Gateway to Local Excitement</h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    LocoAdventure connects thrill-seekers with unique local experiences - from adrenaline-pumping
+                    outdoor adventures to immersive entertainment zones. Discover hidden gems in your city and
+                    create unforgettable memories!
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8 text-left">
+                    <div class="p-6 bg-purple-50 rounded-xl">
+                        <h3 class="text-2xl font-bold text-purple-600 mb-4">For Adventurers</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>📍 Real-time location-based discovery</li>
+                            <li>🎯 Smart filters & personalized recommendations</li>
+                            <li>📅 Book permanent venues or temporary events</li>
+                            <li>💸 Exclusive discounts for registered users</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-6 bg-blue-50 rounded-xl">
+                        <h3 class="text-2xl font-bold text-blue-600 mb-4">For Vendors</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>📈 Reach local adventure seekers</li>
+                            <li>⏱️ Manage bookings & availability</li>
+                            <li>🎉 Promote special events & discounts</li>
+                            <li>🌟 Build reputation through reviews</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example Adventures -->
+            <h3 class="text-3xl font-bold text-center mb-12 text-gray-800">Popular Adventure Types</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="adventure-card bg-white rounded-xl overflow-hidden">
+                    <img src="{% static 'Images/Horror_room.png' %}" alt="Escape Room" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h4 class="font-bold text-xl mb-2 text-purple-600">Mystery & Horror Experience</h4>
+                        <p class="text-gray-600">Test your puzzle-solving skills with chills in Escape Rooms & More</p>
+                    </div>
+                </div>
+
+                <div class="adventure-card bg-white rounded-xl overflow-hidden">
+                    <img src="{% static 'Images/Park.png' %}" alt="Amusement Park" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h4 class="font-bold text-xl mb-2 text-purple-600">Thrilling & Greenery Experience</h4>
+                        <p class="text-gray-600">Thrilling rides & family-friendly attractions</p>
+                    </div>
+                </div>
+
+                <div class="adventure-card bg-white rounded-xl overflow-hidden">
+                    <img src="{% static 'Images/Party.jpg' %}" alt="Paintball" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h4 class="font-bold text-xl mb-2 text-purple-600">Fun Experience With Friends</h4>
+                        <p class="text-gray-600">Explore New Things and Make Memories with your friends</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function showUserModal() {
+            document.getElementById('userModal').classList.remove('hidden');
+        }
+
+        function showVendorModal() {
+            document.getElementById('vendorModal').classList.remove('hidden');
+        }
+
+        function hideModals() {
+            document.getElementById('userModal').classList.add('hidden');
+            document.getElementById('vendorModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('userModal') ||
+                event.target == document.getElementById('vendorModal')) {
+                hideModals();
+            }
+        }
+
+        // Mobile Menu Toggle with proper event delegation
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            mobileMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = mobileMenu.classList.contains('hidden');
+
+                if (isOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenuButton.innerHTML = `
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M6 18L18 6M6 6l12 12"/>
+                    </svg>`;
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.innerHTML = `
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>`;
+                }
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.innerHTML = `
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>`;
+                }
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            // Check if click is outside both menu and button
+            if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                menuIcon.style.transform = 'rotate(0deg) scale(1)';
+            }
+        });
+
+        // Close menu on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                mobileMenu.classList.add('hidden');
+                menuIcon.style.transform = 'rotate(0deg) scale(1)';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
