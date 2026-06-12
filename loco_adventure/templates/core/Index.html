@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LocoAdventure - Discover Local Adventures</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <style>
         .section {
             min-height: 100vh;
@@ -26,7 +26,7 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 font-body">
     <!-- Navigation -->
     <nav class="bg-white/10 backdrop-blur-md fixed w-full z-50 shadow-sm">
         <div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
@@ -132,7 +132,7 @@
             <div class="flex gap-4">
                 <a href="{% url 'user-dashboard' %}"
                     class="flex-1 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg inline-block text-center">
-                    Already a Adventurer
+                    I'm already in
                 </a>
 
                 <a href="{% url 'user-register' %}"
