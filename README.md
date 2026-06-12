@@ -1,45 +1,64 @@
-Project Setup :
-------------------
--> Create a virtual Environment in base dir and activate it
-    pip install pipenv
+# Project Setup
 
--> Install these Libraries in the virtual Envirnment created
-    pipenv install django
-    pipenv install python-dotenv
-    pipenv install djangorestframework
-    pipenv install reportlab
+1. Create a virtual environment in the project base directory and activate it.
 
--------------------
-Current Progress :
--------------------
--> For Users 
-    Register/Login
-    Can search, check price & explore any adventure
-    filter them using Categories (Indoor, Outdoor & Events)
-    Book tickets for any events (Tickets generates automatically using reportlab & send to mail)
-    A booking tab where user can see their previous bookings
+```bash
+pip install pipenv
+```
 
+2. Install the required libraries in the virtual environment.
 
--> For Vendor
-    Register/Login
-    Create an adventure (Promote their Event/Place)
-    Set Price & Main image(Thumbnail) of adventure
-    Can edit the adventure later
+```bash
+pipenv install django
+pipenv install python-dotenv
+pipenv install djangorestframework
+pipenv install reportlab
+```
 
+---
 
-------------------
-To Be Done : 
-------------------
--> For Users :
-    Takes location from user and how the result near or close to them first
-    Add section to include few images of the place(adventure)
-    Comment and Rating Feature
-    Add a section to customise user profile
-    Payment Integration
+# Current Progress
 
+## For Users
 
--> For Vendor
-    Build Working Stats Function to show number of booking and revenue generated within a time span (For Both Overall Adventures & Seperate Adventures)
+- Register/Login
+- Search, check prices, and explore adventures
+- Filter adventures using categories:
+  - Indoor
+  - Outdoor
+  - Events
+- Book tickets for events
+  - Tickets are generated automatically using ReportLab
+  - Tickets are sent via email
+- View previous bookings from the **Bookings** section
 
--> For Admin/Selected Users 
-    Verification feature to verify if the adventure added by user is safe & authorized.
+## For Vendors
+
+- Register/Login
+- Create adventures (promote events or places)
+- Set adventure price and thumbnail image
+- Edit adventures after creation
+
+---
+
+# To Be Done
+
+## For Users
+
+- Use user location to prioritize nearby adventures
+- Add support for multiple images for each adventure/place
+- Comment and rating system
+- User profile customization
+- Payment gateway integration
+
+## For Vendors
+
+- Build a statistics dashboard showing:
+  - Number of bookings
+  - Revenue generated
+  - Custom date-range filtering
+  - Statistics for both overall and individual adventures
+
+## For Admins / Verified Users
+
+- Adventure verification system to ensure submitted adventures are safe, authentic, and authorized
