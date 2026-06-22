@@ -39,3 +39,8 @@ def send_ticket_email(to_email, pdf_bytes, booking):
         logging.info(f"Ticket email sent successfully to {to_email} for booking {booking.id}")
     except Exception as e:
         logging.error(f"Failed to send ticket email to {to_email} for booking {booking.id}: {e}")
+
+import os
+
+print("EMAIL_HOST_USER:", os.getenv("EMAIL_HOST_USER"))
+print("PASSWORD EXISTS:", bool(os.getenv("EMAIL_HOST_PASSWORD")))

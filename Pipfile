@@ -8,6 +8,8 @@ django = "*"
 python-dotenv = "*"
 djangorestframework = "*"
 reportlab = "*"
+gunicorn = "*"
+whitenoise = "*"
 
 [dev-packages]
 
