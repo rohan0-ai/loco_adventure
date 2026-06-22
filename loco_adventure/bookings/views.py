@@ -4,6 +4,7 @@ from adventures.models import Adventure
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.http import HttpResponse
 from .utils import generate_ticket_pdf, send_ticket_email
 
 @login_required
@@ -44,3 +45,17 @@ def create_booking(request, adventure_id):
             messages.error(request, f"Booking successful but failed to send ticket email: {e}")
         return redirect('bookings:booking-detail', pk=booking.pk)
     return render(request, 'core/booking.html', {'adventure': adventure, 'quantity': 1, 'total_amount': adventure.price})
+
+
+#Downloading the generated PDF
+def download_ticket(request, booking_id):
+    booking = Booking.objects.get(id=booking_id)
+
+    pdf = generate_ticket_pdf(booking)
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'attachment; filename="ticket_{booking.id}.pdf"'
+    )
+
+    return response
