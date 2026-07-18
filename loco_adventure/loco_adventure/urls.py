@@ -34,6 +34,7 @@ urlpatterns = [
     path('adventures/', include('adventures.urls', namespace='adventures')),
     path('bookings/', include('bookings.urls', namespace='bookings')),
     path('vendor/', include('vendors.urls', namespace='vendors')),
+    path('api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

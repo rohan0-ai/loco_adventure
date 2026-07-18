@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'adventures',
     'bookings',
     'vendors',
+    'api',
 ]
 
 MIDDLEWARE = [
