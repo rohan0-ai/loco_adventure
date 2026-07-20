@@ -160,3 +160,5 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = 'noreply@loco-adventure.com'
 
 LOGIN_URL = '/login/'
+
+OPENTRIPMAP_API_KEY = os.getenv("OPENTRIPMAP_API_KEY")

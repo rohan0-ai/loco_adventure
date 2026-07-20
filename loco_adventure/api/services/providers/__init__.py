@@ -1,0 +1,1 @@
+from .opentripmap import get_nearby_places
