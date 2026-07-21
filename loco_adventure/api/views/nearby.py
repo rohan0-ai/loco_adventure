@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from api.services import search_nearby_places
+from api.serializers import NearbyResponseSerializer
 
 
 class NearbyPlacesView(APIView):
@@ -28,10 +29,14 @@ class NearbyPlacesView(APIView):
                 limit=limit,
             )
 
-            return Response({
+            response_data = {
                 "count": len(places),
                 "results": places,
-            })
+            }
+
+            serializer = NearbyResponseSerializer(response_data)
+
+            return Response(serializer.data)
 
         except ValueError:
             return Response(

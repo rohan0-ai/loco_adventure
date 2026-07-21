@@ -1,8 +1,9 @@
 from .category_mapper import map_category
 
-def format_opentripmap_places(raw_data):
+
+def format_nearby_places(raw_data):
     """
-    Convert OpenTripMap response into our application's format.
+    Convert OpenTripMap nearby response into our application's format.
     """
 
     formatted_places = []
@@ -14,7 +15,6 @@ def format_opentripmap_places(raw_data):
 
         name = properties.get("name")
 
-        # Skip unnamed places
         if not name:
             continue
 
