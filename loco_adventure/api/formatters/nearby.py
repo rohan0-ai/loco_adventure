@@ -1,4 +1,5 @@
 from .category_mapper import map_category
+from .details import format_distance
 
 
 def format_nearby_places(raw_data):
@@ -23,7 +24,7 @@ def format_nearby_places(raw_data):
         formatted_places.append({
             "id": properties.get("xid"),
             "name": name,
-            "distance": round(properties.get("dist", 0)),
+            "distance": format_distance(properties.get("dist")),
             "latitude": coordinates[1],
             "longitude": coordinates[0],
             "category": map_category(properties.get("kinds", "")),

@@ -73,3 +73,21 @@ def build_image(raw_data):
     image_url = preview.get("source")
 
     return normalize_image_url(image_url)
+
+def format_distance(distance):
+    """
+    Format distance for display while preserving the raw value.
+    """
+
+    if distance is None:
+        return None
+
+    if distance < 1000:
+        display = f"{int(distance)} m"
+    else:
+        display = f"{distance / 1000:.1f} km"
+
+    return {
+        "meters": int(distance),
+        "display": display,
+    }

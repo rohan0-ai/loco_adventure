@@ -18,6 +18,9 @@ class MediaSerializer(serializers.Serializer):
         required=False,
     )
 
+class DistanceSerializer(serializers.Serializer):
+    meters = serializers.IntegerField()
+    display = serializers.CharField()
 
 class PlaceSerializer(serializers.Serializer):
     id = serializers.CharField()
@@ -26,7 +29,7 @@ class PlaceSerializer(serializers.Serializer):
 
     category = serializers.CharField()
 
-    distance = serializers.IntegerField()
+    distance = DistanceSerializer()
 
     location = LocationSerializer(required=True)
 
