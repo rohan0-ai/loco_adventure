@@ -28,3 +28,12 @@ def adventure_list(request):
 def adventure_detail(request, pk):
     adventure = get_object_or_404(Adventure, pk=pk)
     return render(request, 'adventures/adventure_detail.html', {'adventure': adventure})
+
+def place_detail(request, xid):
+    return render(
+        request,
+        "core/place_detail.html",
+        {
+            "xid": xid,
+        },
+    )
