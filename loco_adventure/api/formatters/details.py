@@ -44,8 +44,32 @@ def build_summary(raw_data, limit=180):
 
     return summary
 
+def normalize_image_url(url):
+    """
+    Convert Wikimedia thumbnail URLs to the original image URL.
+
+    Example:
+    https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/image.jpg/266px-image.jpg to 
+        
+    https://upload.wikimedia.org/wikipedia/commons/0/07/image.jpg
+    """
+
+    if not url:
+        return None
+
+    if "upload.wikimedia.org" not in url or "/thumb/" not in url:
+        return url
+
+    parts = url.split("/")
+
+    parts.remove("thumb")
+
+    parts.pop()
+
+    return "/".join(parts)
+
 def build_image(raw_data):
-
     preview = raw_data.get("preview", {})
+    image_url = preview.get("source")
 
-    return preview.get("source")
+    return normalize_image_url(image_url)
