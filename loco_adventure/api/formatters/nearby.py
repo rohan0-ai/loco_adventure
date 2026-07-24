@@ -32,3 +32,4 @@ def format_nearby_places(raw_data):
         })
 
     return formatted_places
+

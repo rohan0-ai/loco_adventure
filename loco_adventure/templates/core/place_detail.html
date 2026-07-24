@@ -1,3 +1,16 @@
 <h1>Place Details</h1>
 
 <p>XID: {{ xid }}</p>
+
+{% load static %}
+
+<script type="module" src="{% static 'js/place/place.js' %}">
+</script>
+
+<main class="container mx-auto py-10">
+
+    <div id="place-detail" data-xid="{{ xid }}">
+        Loading place...
+    </div>
+
+</main>

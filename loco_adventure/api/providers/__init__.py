@@ -1,1 +1,1 @@
-from .opentripmap import get_nearby_places
+from .opentripmap import get_nearby_places, get_place_details

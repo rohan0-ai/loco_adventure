@@ -42,3 +42,24 @@ class PlaceSerializer(serializers.Serializer):
     )
 
     source = serializers.CharField()
+
+class ExternalLinksSerializer(serializers.Serializer):
+    opentripmap = serializers.URLField(allow_null=True)
+
+class PlaceDetailSerializer(serializers.Serializer):
+
+    id = serializers.CharField()
+
+    name = serializers.CharField()
+
+    category = serializers.CharField(allow_null=True)
+
+    summary = serializers.CharField(allow_null=True)
+
+    address = LocationSerializer(required=True)
+
+    media = MediaSerializer()
+
+    rating = serializers.CharField(allow_null=True)
+
+    external_links = ExternalLinksSerializer()

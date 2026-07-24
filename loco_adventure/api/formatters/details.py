@@ -17,6 +17,18 @@ def format_place_details(raw_data):
         }
     }
 
+def format_place_full_details(raw_data):
+    return {
+        "id": raw_data.get("xid"),
+        "name": raw_data.get("name"),
+        "category": map_category(raw_data),
+        "summary": build_summary_long(raw_data),
+        "address": build_address(raw_data),
+        "media": build_image(raw_data),
+        "rating": build_rating(raw_data),
+        "external_links": build_external_links(raw_data),
+    }
+
 def build_address(address):
     """
     Convert OpenTripMap address object into a readable string.
@@ -91,3 +103,17 @@ def format_distance(distance):
         "meters": int(distance),
         "display": display,
     }
+
+def build_rating(raw_data):
+    return raw_data.get("rate")
+
+def build_external_links(raw_data):
+    return {
+        "opentripmap": raw_data.get("otm"),
+    }
+
+def build_summary_long(raw_data):
+
+    wikipedia = raw_data.get("wikipedia_extracts", {})
+
+    return wikipedia.get("text")

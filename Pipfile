@@ -6,10 +6,12 @@ name = "pypi"
 [packages]
 django = "*"
 python-dotenv = "*"
-djangorestframework = "*"
 reportlab = "*"
 gunicorn = "*"
 whitenoise = "*"
+psycopg = {extras = ["binary"], version = "*"}
+djangorestframework = "*"
+requests = "*"
 
 [dev-packages]
 

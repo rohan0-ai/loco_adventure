@@ -87,3 +87,7 @@ def enrich_place(place):
 
     "source": place["source"],
 }
+
+def get_place_details(xid):
+    raw_data = get_place_details(xid)
+    return format_place_details(raw_data)
