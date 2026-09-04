@@ -1,5 +1,5 @@
 from .category_mapper import map_category
-from .details import format_distance
+from .details import format_distance, build_summary, build_image, build_address
 
 
 def format_nearby_places(raw_data):

@@ -21,7 +21,7 @@ def format_place_full_details(raw_data):
     return {
         "id": raw_data.get("xid"),
         "name": raw_data.get("name"),
-        "category": map_category(raw_data),
+        "category": map_category(raw_data.get("kinds", "")),
         "summary": build_summary_long(raw_data),
         "address": build_address(raw_data),
         "media": build_image(raw_data),

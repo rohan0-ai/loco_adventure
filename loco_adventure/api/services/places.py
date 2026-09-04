@@ -1,8 +1,8 @@
 from api.providers import get_nearby_places
 from api.formatters import format_nearby_places
 
-from api.providers.opentripmap import get_place_details
-from api.formatters import format_place_details
+from api.providers.opentripmap import get_place_details as provider_get_place_details
+from api.formatters import format_place_details, format_place_full_details
 
 import logging
 
@@ -54,7 +54,7 @@ def search_nearby_places(lat, lon, radius=5000, limit=10):
 def enrich_place(place):
 
     try:
-        raw = get_place_details(place["id"])
+        raw = provider_get_place_details(place["id"])
         details = format_place_details(raw)
 
     except Exception as e:
@@ -89,5 +89,6 @@ def enrich_place(place):
 }
 
 def get_place_details(xid):
-    raw_data = get_place_details(xid)
-    return format_place_details(raw_data)
+    raw_data = provider_get_place_details(xid)
+    formatted = format_place_details(raw_data)
+    return formatted
