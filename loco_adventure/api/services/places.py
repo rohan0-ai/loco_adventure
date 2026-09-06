@@ -90,5 +90,5 @@ def enrich_place(place):
 
 def get_place_details(xid):
     raw_data = provider_get_place_details(xid)
-    formatted = format_place_details(raw_data)
-    return formatted
+    formatted_data = format_place_full_details(raw_data)
+    return formatted_data

@@ -1,5 +1,8 @@
 export function buildPlaceDetailsTemplate(place) {
 
+    console.log("PLACE DETAILS:", place);
+    console.log("ADDRESS:", place.address);
+
     return `
         <h1 class="text-4xl font-bold mb-6">
             ${place.name}
@@ -17,8 +20,7 @@ export function buildPlaceDetailsTemplate(place) {
 
         <p class="mb-4">
             <strong>Address:</strong>
-            ${place.address ?? "Unknown"}
+            ${place.address?.address ?? "Unknown"}
         </p>
     `;
-
 }

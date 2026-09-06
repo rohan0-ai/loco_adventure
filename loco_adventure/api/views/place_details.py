@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from api.providers import get_place_details
+from api.services import get_place_details
 from api.serializers import PlaceDetailSerializer
 
 

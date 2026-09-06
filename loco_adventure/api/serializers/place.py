@@ -58,7 +58,7 @@ class PlaceDetailSerializer(serializers.Serializer):
 
     address = LocationSerializer(required=True)
 
-    media = MediaSerializer()
+    media = MediaSerializer(required=True)
 
     rating = serializers.CharField(allow_null=True)
 

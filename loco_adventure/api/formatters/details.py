@@ -18,13 +18,22 @@ def format_place_details(raw_data):
     }
 
 def format_place_full_details(raw_data):
+    point = raw_data.get("point", {})
     return {
         "id": raw_data.get("xid"),
         "name": raw_data.get("name"),
         "category": map_category(raw_data.get("kinds", "")),
         "summary": build_summary_long(raw_data),
-        "address": build_address(raw_data),
-        "media": build_image(raw_data),
+        "address": {
+            "lat": point.get("lat"),
+            "lng": point.get("lon"),
+            "address": build_address(
+                raw_data.get("address", {})
+            ),
+        },
+        "media": {
+            "image": build_image(raw_data),
+        },
         "rating": build_rating(raw_data),
         "external_links": build_external_links(raw_data),
     }
