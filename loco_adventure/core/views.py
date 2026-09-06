@@ -51,6 +51,9 @@ from django.db.models import F, FloatField
 from django.db.models.functions import ACos, Cos, Radians, Sin
 
 def get_initials(user):
+    if not user.is_authenticated:
+        return None
+
     if user.first_name and user.last_name:
         return f"{user.first_name[0].upper()}{user.last_name[0].upper()}"
     elif user.first_name:
@@ -62,7 +65,6 @@ def get_initials(user):
 
 from .forms import AdventureFilterForm
 
-@login_required
 def user_dashboard(request):
     user = request.user
     user_lat = request.GET.get('latitude')
@@ -108,6 +110,7 @@ def user_dashboard(request):
     initials = get_initials(user)
     context = {
         'user': user,
+        'is_authenticated': user.is_authenticated,
         'featured_adventures': featured_adventures,
         'initials': initials,
         'form': form,
@@ -134,7 +137,6 @@ def booking(request, adventure_id):
     }
     return render(request, 'core/booking.html', context)
 
-@login_required
 def load_more_adventures(request):
     user_lat = request.GET.get('latitude')
     user_lon = request.GET.get('longitude')

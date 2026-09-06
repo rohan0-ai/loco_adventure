@@ -1,12 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from api.services import search_nearby_places
 from api.serializers import NearbyResponseSerializer
 
 
 class NearbyPlacesView(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         try:
             lat = request.query_params.get("lat")

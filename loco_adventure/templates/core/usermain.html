@@ -40,32 +40,71 @@
                 <span>LocoAdventure</span>
             </div>
 
-            <!-- User Menu - Improved Contrast -->
-            <div class="flex items-center space-x-4">
-                <a href="{% url 'bookings:booking-list' %}" class="text-yellow-300 hover:text-yellow-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                </a>
-                <div class="relative">
-                    {% if user.profile_pic %}
-                    <img id="profileButton" src="{{ user.profile_pic.url }}" alt="Profile Picture"
-                        class="w-10 h-10 rounded-full object-cover cursor-pointer" />
-                    {% else %}
-                    <div id="profileButton"
-                        class="w-10 h-10 rounded-full bg-yellow-400 text-purple-900 flex items-center justify-center cursor-pointer font-bold">
-                        {{ initials }}
-                    </div>
-                    {% endif %}
-                    <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl hidden">
-                        <a href="{% url 'bookings:booking-list' %}"
-                            class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Bookings</a>
-                        <a href="{% url 'user-logout' %}"
-                            class="block px-4 py-2 text-purple-600 hover:bg-purple-50">Logout</a>
-                    </div>
+<!-- User Menu -->
+        <div class="flex items-center space-x-4">
+
+    {% if user.is_authenticated %}
+
+        <!-- Bookings -->
+        <a href="{% url 'bookings:booking-list' %}"
+           class="text-yellow-300 hover:text-yellow-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+        </a>
+
+        <!-- Profile -->
+        <div class="relative">
+            {% if user.profile_pic %}
+                <img id="profileButton"
+                     src="{{ user.profile_pic.url }}"
+                     alt="Profile Picture"
+                     class="w-10 h-10 rounded-full object-cover cursor-pointer" />
+            {% else %}
+                <div id="profileButton"
+                     class="w-10 h-10 rounded-full bg-yellow-400 text-purple-900
+                            flex items-center justify-center cursor-pointer font-bold">
+                    {{ initials }}
                 </div>
+            {% endif %}
+
+            <div id="profileDropdown"
+                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl hidden">
+
+                <a href="{% url 'bookings:booking-list' %}"
+                   class="block px-4 py-2 text-purple-600 hover:bg-purple-50">
+                    Bookings
+                </a>
+
+                <a href="{% url 'user-logout' %}"
+                   class="block px-4 py-2 text-purple-600 hover:bg-purple-50">
+                    Logout
+                </a>
+
             </div>
+        </div>
+
+    {% else %}
+
+        <!-- Anonymous User -->
+        <a href="{% url 'user-login' %}"
+           class="text-white hover:text-yellow-300 font-semibold">
+            Login
+        </a>
+
+        <a href="{% url 'user-register' %}"
+           class="bg-yellow-400 hover:bg-yellow-300
+                  text-purple-900 px-4 py-2 rounded-full
+                  font-semibold">
+            Sign Up
+        </a>
+
+    {% endif %}
+
+</div>
         </div>
     </nav>
 
