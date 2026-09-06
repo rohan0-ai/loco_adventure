@@ -1,16 +1,42 @@
-<h1>Place Details</h1>
-
-<p>XID: {{ xid }}</p>
-
 {% load static %}
 
-<script type="module" src="{% static 'js/place/place.js' %}">
-</script>
+<!DOCTYPE html>
+<html lang="en">
 
-<main class="container mx-auto py-10">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <div id="place-detail" data-xid="{{ xid }}">
-        Loading place...
-    </div>
+    <title>Place Details</title>
 
-</main>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50">
+
+    <nav class="bg-purple-600 fixed w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-3">
+            <div class="text-white font-bold text-xl sm:text-2xl">
+                <a href="#" class="hover:underline">
+                    LocoAdventure
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20 px-4 sm:px-6 container mx-auto py-10">
+
+        <div id="place-detail" data-xid="{{ xid }}">
+            Loading place...
+        </div>
+
+    </main>
+
+    <script
+        type="module"
+        src="{% static 'js/place/place.js' %}">
+    </script>
+
+</body>
+
+</html>
